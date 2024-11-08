@@ -170,6 +170,29 @@ namespace OneDriveBully
 
         #region Bully Function
 
+        public void bullyNowSyncFiles()
+        {
+            //Get all files that start with 'OneDriveBully_SyncTempFile'
+            string[] oldFiles = Directory.GetFiles(@rootPath, fileName + "*.txt");
+            if ((oldFiles.Length > 1) || (oldFiles.Length == 0))
+            {
+                //Remove old files - in case there are leftovers from previous syncs
+                foreach (string oldFile in oldFiles)
+                {
+                    File.Delete(oldFile);
+                }
+
+                //Create new file
+                File.Create(rootPath + fileName + DateTime.Now.ToString("-yyyyMMdd-hhmmss") + ".txt").Close();
+            }
+            else
+            {
+                //Only 1 file exists (normal case), rename it with latest datetime
+                File.Move(oldFiles[0], rootPath + fileName + DateTime.Now.ToString("-yyyyMMdd-hhmmss") + ".txt");
+            }
+            //Version 1.3 +
+        }
+        
         public void bullyNow()
         {
             UpdateIconText(1);
@@ -191,27 +214,9 @@ namespace OneDriveBully
                 //{
                 //    File.Delete(rootPath + fileName);
                 //}
-
-                //Get all files that start with 'OneDriveBully_SyncTempFile'
-                string[] oldFiles = Directory.GetFiles(@rootPath, fileName + "*.txt");
-                if ((oldFiles.Length > 1) || (oldFiles.Length == 0))
-                {
-                    //Remove old files - in case there are leftovers from previous syncs
-                    foreach (string oldFile in oldFiles)
-                    {
-                        File.Delete(oldFile);
-                    }
-
-                    //Create new file
-                    File.Create(rootPath + fileName + DateTime.Now.ToString("-yyyyMMdd-hhmmss") + ".txt").Close();
-                }
-                else
-                {
-                    //Only 1 file exists (normal case), rename it with latest datetime
-                    File.Move(oldFiles[0], rootPath + fileName + DateTime.Now.ToString("-yyyyMMdd-hhmmss") + ".txt");
-                }
-                //Version 1.3 +
-
+                
+                bullyNowSyncFiles();
+                
                 Thread.Sleep(5000);
                 setTimerInterval(Properties.Settings.Default.TimerInterval);
             } //Version 1.1 - Bug Fix -+

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -15,6 +16,26 @@ namespace OneDriveBully
 
         static void Main()
         {
+            var args = Environment.GetCommandLineArgs(); 
+            if (args.Length > 1)
+            {
+                if (args[1] == "bully")
+                {
+                    var fn = new MyFunctions();
+                    if (!fn.checkUserSettings())
+                    {
+                        Console.Out.WriteLine("Settings are missing.");
+                        return;
+                    }
+                    fn.bullyNowSyncFiles(); 
+                    Console.Out.WriteLine("BullyNow Executed.");
+                } else
+                {
+                    Console.Out.WriteLine("Invalid command line argument, argument valid: 'bully'");
+                }
+                Application.Exit();
+                return;
+            }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
